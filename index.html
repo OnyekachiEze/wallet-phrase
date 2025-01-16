@@ -1,21 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crypto Wallet Integration</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@latest/dist/ethers.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Wallet Selector</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3modal"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@coinbase/wallet-sdk/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fortmatic"></script>
+    <script src="https://cdn.jsdelivr.net/npm/torus-embed"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@portis/web3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bitski/dist/bitski.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+        }
 
+        .container {
+            margin-top: 100px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
+
 <body>
-  <h2>Connect Crypto Wallets</h2>
-  <button id="connectMetaMask">Connect MetaMask</button>
-  <button id="connectWalletConnect">Connect WalletConnect</button>
+    <div class="container">
+        <h1>Connect Your Crypto Wallet</h1>
+        <button id="connect-wallet">Connect Wallet</button>
+    </div>
 
-  <div id="walletAddress"></div>
+    <script>
+        async function initializeWeb3Modal() {
+            const providerOptions = {
+                walletconnect: {
+                    package: window.WalletConnectProvider,
+                    options: {
+                        infuraId: "INFURA_PROJECT_ID" // Replace with your Infura Project ID
+                    }
+                },
+                coinbasewallet: {
+                    package: window.CoinbaseWalletSDK,
+                    options: {
+                        appName: "Crypto Wallet Selector",
+                        infuraId: "INFURA_PROJECT_ID", // Replace with your Infura Project ID
+                    }
+                },
+                fortmatic: {
+                    package: window.Fortmatic,
+                    options: {
+                        key: "FORTMATIC_API_KEY" // Replace with your Fortmatic API Key
+                    }
+                },
+                torus: {
+                    package: window.Torus,
+                    options: {
+                        buttonPosition: "top-right",
+                        network: "mainnet", // Replace with 'testnet' if you want a testnet environment
+                    }
+                },
+                portis: {
+                    package: window.Portis,
+                    options: {
+                        id: "PORTIS_DAPP_ID" // Replace with your Portis DApp ID
+                    }
+                },
+                bitski: {
+                    package: Bitski,
+                    options: {
+                        clientId: "BITSKI_CLIENT_ID", // Replace with your Bitski Client ID
+                        callbackUrl: "http://localhost:3000/callback" // Replace with your callback URL
+                    }
+                },
+                binancechainwallet: {
+                    package: true,
+                },
+                trustwallet: {
+                    package: true, // Trust Wallet will use WalletConnect
+                },
+                ledger: {
+                    package: window.Ledger,
+                    options: { appName: "Ledger Wallet Integration" }
+                },
+                trezor: {
+                    package: window.TrezorConnect,
+                    options: { appName: "Trezor Wallet Integration" }
+                },
+                safepal: {
+                    package: {},
+                    options: { appName: "SafePal Wallet" }
+                },
+                exodus: {
+                    package: {},
+                    options: { appName: "Exodus Wallet" }
+                },
+                myetherwallet: {
+                    package: {},
+                    options: { appName: "MyEtherWallet" }
+                },
+                mathwallet: {
+                    package: {},
+                    options: { appName: "MathWallet" }
+                },
+                zelcore: {
+                    package: {},
+                    options: { appName: "Zelcore Wallet" }
+                },
+                tokenpocket: {
+                    package: {},
+                    options: { appName: "TokenPocket Wallet" }
+                },
+                unstoppable: {
+                    package: {},
+                    options: { appName: "Unstoppable Wallet" }
+                },
+                rainbow: {
+                    package: {},
+                    options: { appName: "Rainbow Wallet" }
+                },
+                argent: {
+                    package: {},
+                    options: { appName: "Argent Wallet" }
+                },
+                bitkeep: {
+                    package: {},
+                    options: { appName: "BitKeep Wallet" }
+                },
+                sequence: {
+                    package: {},
+                    options: { appName: "Sequence Wallet" }
+                },
+                bitpay: {
+                    package: window.BitPayWallet,
+                    options: {}
+                },
+                venly: {
+                    package: window.Venly,
+                    options: {}
+                }
+            };
 
-  <script src="app.js"></script>
+            const web3Modal = new Web3Modal.default({
+                cacheProvider: true,  // Enable caching
+                providerOptions,
+                disableInjectedProvider: false
+            });
+
+            document.getElementById("connect-wallet").addEventListener("click", async () => {
+                try {
+                    const provider = await web3Modal.connect();
+                    const ethersProvider = new ethers.providers.Web3Provider(provider);
+                    const accounts = await ethersProvider.listAccounts();
+                    alert(`Connected: ${accounts[0]}`);
+                } catch (error) {
+                    if (error.message.includes("User Rejected")) {
+                        alert("Connection rejected by the user. Please try again.");
+                    } else {
+                        console.error("Could not connect to wallet", error);
+                        alert("An error occurred while connecting to the wallet. Please try again.");
+                    }
+                }
+            });
+
+        }
+
+        initializeWeb3Modal();
+    </script>
 </body>
+
 </html>
