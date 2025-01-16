@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,11 +20,9 @@
             padding: 0;
             background-color: #f3f4f6;
         }
-
         .container {
             margin-top: 100px;
         }
-
         button {
             background-color: #4caf50;
             color: white;
@@ -35,13 +32,11 @@
             cursor: pointer;
             border-radius: 5px;
         }
-
         button:hover {
             background-color: #45a049;
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <h1>Connect Your Crypto Wallet</h1>
@@ -72,10 +67,7 @@
                 },
                 torus: {
                     package: window.Torus,
-                    options: {
-                        buttonPosition: "top-right",
-                        network: "mainnet", // Replace with 'testnet' if you want a testnet environment
-                    }
+                    options: {}
                 },
                 portis: {
                     package: window.Portis,
@@ -94,14 +86,14 @@
                     package: true,
                 },
                 trustwallet: {
-                    package: true, // Trust Wallet will use WalletConnect
+                    package: true,
                 },
                 ledger: {
-                    package: window.Ledger,
+                    package: {},
                     options: { appName: "Ledger Wallet Integration" }
                 },
                 trezor: {
-                    package: window.TrezorConnect,
+                    package: {},
                     options: { appName: "Trezor Wallet Integration" }
                 },
                 safepal: {
@@ -147,19 +139,11 @@
                 sequence: {
                     package: {},
                     options: { appName: "Sequence Wallet" }
-                },
-                bitpay: {
-                    package: window.BitPayWallet,
-                    options: {}
-                },
-                venly: {
-                    package: window.Venly,
-                    options: {}
                 }
             };
 
             const web3Modal = new Web3Modal.default({
-                cacheProvider: true,  // Enable caching
+                cacheProvider: false,
                 providerOptions,
                 disableInjectedProvider: false
             });
@@ -171,19 +155,12 @@
                     const accounts = await ethersProvider.listAccounts();
                     alert(`Connected: ${accounts[0]}`);
                 } catch (error) {
-                    if (error.message.includes("User Rejected")) {
-                        alert("Connection rejected by the user. Please try again.");
-                    } else {
-                        console.error("Could not connect to wallet", error);
-                        alert("An error occurred while connecting to the wallet. Please try again.");
-                    }
+                    console.error("Could not connect to wallet", error);
                 }
             });
-
         }
 
         initializeWeb3Modal();
     </script>
 </body>
-
 </html>
