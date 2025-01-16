@@ -42,31 +42,24 @@
         <p id="walletAddress" style="margin-top: 20px;"></p>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
     <script>
         const connectWalletButton = document.getElementById('connectWalletButton');
         const walletAddressDisplay = document.getElementById('walletAddress');
 
         async function connectWallet() {
-            if (window.ethereum || window.walletConnectProvider) {
-                try {
-                    let provider;
-
-                    if (window.ethereum) {
-                        provider = window.ethereum;
-                    } else if (window.walletConnectProvider) {
-                        provider = window.walletConnectProvider;
-                    } else {
-                        throw new Error('No compatible wallet provider found.');
-                    }
-
-                    const accounts = await provider.request({ method: 'eth_requestAccounts' });
-                    const walletAddress = accounts[0];
+            try {
+                if (typeof window.ethereum !== 'undefined') {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send('eth_requestAccounts', []);
+                    const signer = provider.getSigner();
+                    const walletAddress = await signer.getAddress();
                     walletAddressDisplay.textContent = `Connected Wallet Address: ${walletAddress}`;
-                } catch (error) {
-                    walletAddressDisplay.textContent = `Error: ${error.message}`;
+                } else {
+                    walletAddressDisplay.textContent = 'No wallet provider found. Please install MetaMask or a similar wallet.';
                 }
-            } else {
-                walletAddressDisplay.textContent = 'No compatible wallet provider found. Please install a wallet extension or app.';
+            } catch (error) {
+                walletAddressDisplay.textContent = `Error: ${error.message}`;
             }
         }
 
